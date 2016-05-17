@@ -1,0 +1,13 @@
+<launch>
+
+  <node pkg="angle_filter"
+        type="angle_filter_node"
+        name="angle_filter"
+        output="screen">
+        <remap from="~point_cloud" to="/velodyne_points"/>
+        <remap from="~filtered_point_cloud" to="filtered_points"/>
+
+        <rosparam file="$(find angle_filter)/config/parameters.yaml"/>
+  </node>
+
+</launch>

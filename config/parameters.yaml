@@ -1,0 +1,16 @@
+# Minimum and maximum angles for filtering points. These are constraints on a
+# body-frame point cloud, where an angle of (h: 0, v: 0) corresponds to the
+# positive X axis, an angle of (h: 0, v: pi/2) corresponds to the positive Z
+# axis, and an angle of (h: pi/2, v: 0) corresponds to the positive Y axis.
+# All horizontal angles are normalized to [-pi, pi], and all vertical
+# angles are normalized to [-pi/2, pi/2].
+#
+# For example, values of (vmin = 0, vmax = 0, hmin = 0, hmax = 0) would apply no
+# filtering, while values of (0, 0, 0, pi/2) would filter the second quadrant in
+# the XY plane.
+angle_filter:
+  vertical_mask_min: -1.5707
+  vertical_mask_max: 1.5707
+  horizontal_mask_min: -1.5707
+  horizontal_mask_max: 1.5707
+
