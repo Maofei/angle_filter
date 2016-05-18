@@ -61,11 +61,14 @@ bool AngleFilter::Initialize(const ros::NodeHandle& n) {
 }
 
 bool AngleFilter::LoadParameters(const ros::NodeHandle& n) {
-  // Load normal computation parameters.
   if (!pu::Get("angle_filter/vertical_mask_min", v_angle_min_)) return false;
   if (!pu::Get("angle_filter/vertical_mask_max", v_angle_max_)) return false;
   if (!pu::Get("angle_filter/horizontal_mask_min", h_angle_min_)) return false;
   if (!pu::Get("angle_filter/horizontal_mask_max", h_angle_max_)) return false;
+  if (!pu::Get("angle_filter/distance_mask_max", distance_max_)) return false;
+
+  h_angle_min_ = gu::Normalize(h_angle_min_);
+  h_angle_max_ = gu::Normalize(h_angle_max_);
 
   return true;
 }
@@ -103,6 +106,8 @@ bool AngleFilter::Filter(const PointCloud::ConstPtr& points,
   // Copy point cloud header.
   filtered_points->header = points->header;
 
+  const bool flip = h_angle_min_ > h_angle_max_;
+
   // Iterate over points in the original cloud.
   for (const auto& point : points->points) {
     const gu::Vec3 p(point.x, point.y, point.z);
@@ -113,13 +118,20 @@ bool AngleFilter::Filter(const PointCloud::ConstPtr& points,
     // point to the output cloud.
     const gu::Vec3 spherical = gu::CartesianToSpherical(p);
 
+    const double rho = spherical.X();
     const double theta = spherical.Y() - 0.5f * M_PI;
     const double phi = spherical.Z();
-    if (theta < v_angle_min_ ||
-        theta > v_angle_max_ ||
-        phi < h_angle_min_ ||
-        phi > h_angle_max_) {
-      filtered_points->push_back(point);
+
+    if (!flip) {
+      if (theta < v_angle_min_ || theta > v_angle_max_ || phi < h_angle_min_ ||
+          phi > h_angle_max_ || rho >= distance_max_) {
+        filtered_points->push_back(point);
+      }
+    } else {
+      if (theta < v_angle_min_ || theta > v_angle_max_ ||
+          (phi < h_angle_min_ && phi > h_angle_max_) || rho >= distance_max_) {
+        filtered_points->push_back(point);
+      }
     }
   }
 

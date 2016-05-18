@@ -7,10 +7,16 @@
 #
 # For example, values of (vmin = 0, vmax = 0, hmin = 0, hmax = 0) would apply no
 # filtering, while values of (0, 0, 0, pi/2) would filter the second quadrant in
-# the XY plane.
+# the XY plane. To filter the back-facing 180 degrees, set hmin to pi/2 and hmax
+# to 3*pi/2.
 angle_filter:
-  vertical_mask_min: -1.5707
-  vertical_mask_max: 1.5707
-  horizontal_mask_min: -1.5707
-  horizontal_mask_max: 1.5707
+  vertical_mask_min: -1.5707 # radians
+  vertical_mask_max: 1.5707 # radians
+  horizontal_mask_min: 1.5707 # radians
+  horizontal_mask_max: 4.7123 # radians
 
+  # The angle filter mask can be AND'd with a distance filter mask so that we
+  # only filter out points that are both within the specified angles and closer
+  # than a certain distance. To not include a distance mask, set this parameter
+  # to higher than the range of the LiDAR.
+  distance_mask_max: 1.5 # meters

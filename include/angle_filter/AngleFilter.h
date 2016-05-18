@@ -69,11 +69,15 @@ class AngleFilter {
   // The node's name.
   std::string name_;
 
-  // Angular limits. Filter all incoming points outside of these angles.
+  // Angular limits. Filter all incoming points inside of these angles.
   double v_angle_min_;
   double v_angle_max_;
   double h_angle_min_;
   double h_angle_max_;
+
+  // Distance limits. Filter all incoming points that are within the angles
+  // above and also less than this distance.
+  double distance_max_;
 };
 
 #endif
